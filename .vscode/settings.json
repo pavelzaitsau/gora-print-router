@@ -1,0 +1,37 @@
+{
+  "cSpell.words": [
+    "docstrings",
+    "exag",
+    "fabdem",
+    "gpxpy",
+    "latlon",
+    "lons",
+    "nanmin",
+    "ndimage",
+    "outcodes",
+    "polygonize",
+    "splev",
+    "splprep",
+    "SRTM",
+  ],
+  "files.exclude": {
+    "data": true,
+  },
+  "search.exclude": {
+    "data": true,
+    "osm_cache": true,
+  },
+  "files.watcherExclude": {
+    "data/**": true,
+    "osm_cache/**": true,
+  },
+  "python.analysis.exclude": [
+    "**/data",
+    "**/osm_cache",
+  ],
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
+}

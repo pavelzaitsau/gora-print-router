@@ -1,0 +1,67 @@
+// Copy this file to .vscode/launch.json and point the three paths at your own
+// data. launch.json itself is ignored, because those paths are local to one
+// machine.
+//
+// Elevation tiles and GPX tracks live outside the repository. Build the tile
+// index once with `uv run python src/utils/srtm_scanner.py --mode fabdem`
+// before the first run, or the tile lookup finds nothing.
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Router",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "main.py",
+      "args": [
+        "${env:HOME}/gora-data/gpx/track.gpx",
+        "--output", "${env:HOME}/gora-data/obj",
+        "--data-dir", "${env:HOME}/gora-data/FABDEM_V1.2",
+
+        // Standard, 80 x 60 mm
+        "--model-size-x", "80", "--model-size-y", "60",
+        "--track-width", "1", "--track-height", "1",
+        "--terrain-border", "5", "--auto-rotate",
+
+        // Large, 90 x 70 mm
+        // "--model-size-x", "90", "--model-size-y", "70",
+        // "--track-width", "1.5", "--track-height", "1",
+        // "--terrain-border", "10", "--auto-rotate",
+
+        // Custom, 130 x 130 mm
+        // "--model-size-x", "130", "--model-size-y", "130",
+        // "--track-width", "1.5", "--track-height", "1.5",
+        // "--terrain-border", "10",
+
+        // Hexagon coaster, 110 mm across. A manual bbox forbids --auto-rotate
+        // and makes --terrain-border irrelevant. The bbox aspect has to match
+        // the resolved orientation: pointy-top is 0.866, flat-top is 1.155.
+        // Mismatch it and the terrain comes out stretched.
+        // "--model-shape", "hexagon", "--hex-orientation", "auto",
+        // "--model-size-x", "110",
+        // "--track-width", "1.5", "--track-height", "1",
+        // "--bbox-lat-min", "50.82347", "--bbox-lat-max", "50.90495",
+        // "--bbox-lon-min", "16.65163", "--bbox-lon-max", "16.76343",
+
+        // Auto exaggeration stops at 4.0, so anything above it goes here.
+        "--vertical-exaggeration", "1.5",
+        "--base-thickness", "3",
+
+        // Track points kept after simplification.
+        "--max-points", "2000",
+
+        // Grid resolution: 100 is ~34k faces, 150 ~76k, 200 ~160k, 250 ~250k.
+        "--terrain-resolution", "200",
+        "--terrain-upsample", "2",
+        "--smoothing-iterations", "4",
+        "--smoothing-strength", "0.6",
+
+        // 0 off, 1 sea, 2 large lakes, 3 major rivers, 4 rivers, 5 all
+        // waterways. Level 2 and above need the Overpass API.
+        "--water-objects", "0"
+      ],
+      "console": "integratedTerminal",
+      "env": {}
+    }
+  ]
+}
