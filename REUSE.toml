@@ -40,6 +40,29 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = ["2025-2026 Pavel Zaitsau", "2025-2026 Góra Print"]
 SPDX-License-Identifier = "CC0-1.0"
 
+# Trimmed Overpass answers, replayed offline by the water tests. This is OSM
+# data, so it keeps OSM's licence rather than the project's: relicensing a
+# derived extract under AGPL is not ours to do.
+[[annotations]]
+path = [
+  "tests/data/capetown_coast.json",
+  "tests/data/pyrenees_lakes.json",
+  "tests/data/waal_confluence.json",
+  "tests/data/waal_waterways.json",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "OpenStreetMap contributors"
+SPDX-License-Identifier = "ODbL-1.0"
+
+# Hand-built, not an Overpass dump: OSM maps open water as coastline ways, so a
+# closed `natural=sea` area is the one shape a real query never returned. No
+# OSM data in it, so it takes the project licence.
+[[annotations]]
+path = "tests/data/sea_polygon.json"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025-2026 Pavel Zaitsau", "2025-2026 Góra Print"]
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
 # Most of .gitignore is the upstream GitHub template, so the project cannot
 # claim it outright. Upstream is CC0, which waives attribution; naming the
 # source is accuracy, not obligation.
