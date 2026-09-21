@@ -1,0 +1,55 @@
+name: CI
+
+# Runs on every branch, not just main: a feature branch that goes red should
+# say so before the pull request exists. `pull_request` covers what `push`
+# cannot see — a fork's branch, which never pushes to this repository.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs for the same branch. The group keys on the branch
+# name rather than the ref, because a same-repo pull request fires both
+# events and `refs/heads/x` and `refs/pull/N/merge` would not collide.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        # Full version, not @v9: setup-uv publishes no floating major tag for
+        # v9, so @v9 fails to resolve at workflow-parse time.
+        uses: astral-sh/setup-uv@v9.0.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+          # Pinned so a new interpreter release (or a pre-release matching
+          # requires-python) can never change what CI runs on. Keep in sync
+          # with .python-version and [project].requires-python.
+          python-version: "3.14"
+
+      # --locked fails if uv.lock is out of sync with pyproject.toml,
+      # so a dependency change can never land without its lockfile.
+      - name: Install dependencies
+        run: uv sync --locked --dev
+
+      - name: Lint (ruff)
+        run: uv run ruff check --output-format=github
+
+      - name: Format check (ruff)
+        run: uv run ruff format --check
+
+      - name: Type check (mypy)
+        run: uv run mypy
+
+      # Every file carries copyright and licensing, per REUSE 3.3.
+      - name: Licensing (reuse)
+        run: uv run reuse lint --quiet
+
+      - name: Tests (pytest)
+        run: uv run pytest -q

@@ -1,0 +1,53 @@
+# Local gate, run on staged files before each commit.
+#
+#   uv run pre-commit install     # once per clone — writes .git/hooks/pre-commit
+#   uv run pre-commit run -a      # run against the whole tree
+#   git commit --no-verify        # escape hatch
+#
+# ruff runs as a `local` hook through `uv run` on purpose. The upstream
+# ruff-pre-commit repo pins its own ruff version, which then drifts from the
+# one in pyproject.toml — and a hook that formats differently from CI is worse
+# than no hook. Going through uv guarantees a single version.
+#
+# mypy and pytest are deliberately absent: both need the full project and take
+# seconds to tens of seconds. They belong in CI, not in front of every commit.
+
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      # REUSE lints the whole tree, not the staged subset: a file loses its
+      # licensing when it is added, and pre-commit would pass that new file
+      # without ever seeing the LICENSES directory it depends on.
+      - id: reuse
+        name: reuse lint
+        entry: uv run reuse lint --quiet
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-toml
+      # Elevation tiles and OSM caches live next to the source tree; this stops
+      # a stray `git add -A` from committing a multi-megabyte GeoTIFF.
+      - id: check-added-large-files
+        args: [--maxkb=512]
