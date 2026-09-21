@@ -1,0 +1,95 @@
+[project]
+name = "gora-print-router"
+version = "0.1.0"
+description = "Generate 3D-printable OBJ terrain models from GPX tracks and FABDEM elevation rasters"
+readme = "README.md"
+requires-python = ">=3.14"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Pavel Zaitsau" }]
+dependencies = [
+    "gpxpy==1.6.2",
+    "numpy==2.4.2",
+    "rasterio==1.5.0",
+    "requests==2.32.5",
+    "scipy==1.17.0",
+    "shapely==2.1.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/pavelzaitsau/gora-print-router"
+Issues = "https://github.com/pavelzaitsau/gora-print-router/issues"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.0",
+    "pre-commit>=4.6.1",
+    "pytest>=9.1.1",
+    "reuse[charset-normalizer]>=6.2.0",
+    "ruff>=0.16.2",
+    "types-requests>=2.33.0.20260712",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes (unused imports/vars, undefined names)
+    "W",   # pycodestyle warnings
+    "I",   # isort (import ordering)
+    "UP",  # pyupgrade (modernize syntax)
+    "B",   # flake8-bugbear (likely bugs)
+    "SIM", # flake8-simplify
+    "PT",  # flake8-pytest-style (PT011 catches `raises` too broad to mean anything)
+    "RUF", # ruff-specific
+]
+ignore = [
+    "E501",   # line length is owned by `ruff format`; it can't split long
+              # string literals/comments and would fight the linter here.
+    "RUF001", # ✓ / — / ℹ in console output are deliberate, not typos.
+    "RUF002",
+    "RUF003",
+]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src", "tests"]
+
+# Third-party packages that ship no type stubs.
+[[tool.mypy.overrides]]
+module = ["rasterio.*", "gpxpy.*", "shapely.*", "scipy.*"]
+ignore_missing_imports = true
+
+# Tests: type-checked, but test functions need no annotations.
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+
+# Tests monkeypatch this module's imported `requests` symbol; strict mode
+# forbids using an import as an exported attribute, so allow it here.
+[[tool.mypy.overrides]]
+module = ["src.osm.overpass_client"]
+implicit_reexport = true
+
+# RATCHET: legacy modules not yet strict-clean. Remove entries one by one —
+# each removal is a self-contained typing PR. Do not add new entries.
+[[tool.mypy.overrides]]
+module = [
+    "src.core.router",
+    "src.osm.water_features",
+]
+ignore_errors = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    # Real FABDEM tiles / GPX library live outside the repo. Skipped when absent;
+    # run just those with `-m slow`, or skip them locally with `-m "not slow"`.
+    "slow: needs the external elevation data set and takes tens of seconds",
+]
