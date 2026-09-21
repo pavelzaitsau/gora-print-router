@@ -1,0 +1,12 @@
+# Normalize every text file to LF in the index and in the working tree.
+# Without this, .editorconfig's end_of_line setting leaks CRLF into commits
+# and whole-file diffs appear on checkout across platforms.
+* text=auto eol=lf
+
+# Binary assets: never touch line endings.
+*.png binary
+*.jpg binary
+*.tif binary
+*.tiff binary
+*.obj binary
+*.zip binary

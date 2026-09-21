@@ -1,0 +1,43 @@
+# Bulk copyright and licensing for files that carry no SPDX header.
+#
+# Every .py file states its own header. The files below either take no
+# comments, such as the JSON fixtures and uv.lock, or would gain nothing from
+# three lines of boilerplate at the top.
+#
+# `uv run reuse lint` checks the whole tree against REUSE 3.3, in CI and in the
+# pre-commit hook.
+
+version = 1
+SPDX-PackageName = "gora-print-router"
+SPDX-PackageDownloadLocation = "https://github.com/pavelzaitsau/gora-print-router"
+
+# Build and tooling config: too trivial to own, and copyleft on a .gitignore
+# only makes it awkward to copy into the next project.
+[[annotations]]
+path = [
+  ".editorconfig",
+  ".gitattributes",
+  ".github/workflows/ci.yml",
+  ".pre-commit-config.yaml",
+  ".python-version",
+  ".vscode/launch.json.example",
+  ".vscode/settings.json",
+  "pyproject.toml",
+  "uv.lock",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025-2026 Pavel Zaitsau", "2025-2026 Góra Print"]
+SPDX-License-Identifier = "CC0-1.0"
+
+# Most of .gitignore is the upstream GitHub template, so the project cannot
+# claim it outright. Upstream is CC0, which waives attribution; naming the
+# source is accuracy, not obligation.
+[[annotations]]
+path = ".gitignore"
+precedence = "aggregate"
+SPDX-FileCopyrightText = [
+  "GitHub, Inc. and gitignore contributors",
+  "2025-2026 Pavel Zaitsau",
+  "2025-2026 Góra Print",
+]
+SPDX-License-Identifier = "CC0-1.0"
