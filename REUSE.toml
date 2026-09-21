@@ -11,6 +11,17 @@ version = 1
 SPDX-PackageName = "gora-print-router"
 SPDX-PackageDownloadLocation = "https://github.com/pavelzaitsau/gora-print-router"
 
+# Prose ships under the project license; it describes the program.
+[[annotations]]
+path = [
+  "AGENTS.md",
+  "README.md",
+  "tests/data/README.md",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025-2026 Pavel Zaitsau", "2025-2026 Góra Print"]
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
 # Build and tooling config: too trivial to own, and copyleft on a .gitignore
 # only makes it awkward to copy into the next project.
 [[annotations]]
